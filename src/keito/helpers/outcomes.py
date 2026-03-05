@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from keito.types.common import Source
 from keito.types.time_entry import TimeEntry
@@ -37,10 +37,10 @@ class OutcomesHelper:
         unit_price: Optional[float] = None,
         quantity: int = 1,
         success: bool = True,
-        evidence: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        evidence: Optional[dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> TimeEntry:
-        outcome_metadata: Dict[str, Any] = {
+        outcome_metadata: dict[str, Any] = {
             "outcome_type": outcome_type if isinstance(outcome_type, str) else outcome_type.value,
             "outcome_quantity": quantity,
             "outcome_success": success,
@@ -81,10 +81,10 @@ class AsyncOutcomesHelper:
         unit_price: Optional[float] = None,
         quantity: int = 1,
         success: bool = True,
-        evidence: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        evidence: Optional[dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> TimeEntry:
-        outcome_metadata: Dict[str, Any] = {
+        outcome_metadata: dict[str, Any] = {
             "outcome_type": outcome_type if isinstance(outcome_type, str) else outcome_type.value,
             "outcome_quantity": quantity,
             "outcome_success": success,

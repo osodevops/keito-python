@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Awaitable, Generic, Iterator, List, Optional, TypeVar
+from collections.abc import Awaitable, Iterator
+from typing import Any, Callable, Generic, Optional, TypeVar
 
 from keito.core.request_options import RequestOptions
 
@@ -26,7 +27,7 @@ class SyncPageIterator(Generic[T]):
         self._request_options = request_options
         self._current_page = 0
         self._total_pages: Optional[int] = None
-        self._buffer: List[T] = []
+        self._buffer: list[T] = []
         self._buffer_index = 0
         self._exhausted = False
 
@@ -35,7 +36,7 @@ class SyncPageIterator(Generic[T]):
         self.total_pages: Optional[int] = None
         self.per_page: Optional[int] = None
         self.page: Optional[int] = None
-        self.items: List[T] = []
+        self.items: list[T] = []
 
     def _fetch_next_page(self) -> bool:
         if self._exhausted:
@@ -106,7 +107,7 @@ class AsyncPageIterator(Generic[T]):
         self._request_options = request_options
         self._current_page = 0
         self._total_pages: Optional[int] = None
-        self._buffer: List[T] = []
+        self._buffer: list[T] = []
         self._buffer_index = 0
         self._exhausted = False
 
@@ -114,7 +115,7 @@ class AsyncPageIterator(Generic[T]):
         self.total_pages: Optional[int] = None
         self.per_page: Optional[int] = None
         self.page: Optional[int] = None
-        self.items: List[T] = []
+        self.items: list[T] = []
 
     async def _fetch_next_page(self) -> bool:
         if self._exhausted:

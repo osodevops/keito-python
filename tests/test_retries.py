@@ -1,9 +1,7 @@
-import httpx
 import pytest
 from pytest_httpx import HTTPXMock
 
-from keito import Keito, KeitoServerError, KeitoTimeoutError
-from keito.types import User
+from keito import Keito, KeitoServerError
 
 _USER_JSON = {
     "id": "user_123",

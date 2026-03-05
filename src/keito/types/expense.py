@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -30,7 +30,7 @@ class Expense(BaseModel):
     is_billed: bool = False
     approval_status: Optional[ApprovalStatus] = None
     source: Source
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None
     created_at: datetime
     updated_at: datetime
 
@@ -44,4 +44,4 @@ class ExpenseCreate(BaseModel):
     notes: Optional[str] = None
     billable: Optional[bool] = None
     source: Optional[Source] = None
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional
+import builtins
+from typing import Any, Optional
 
 from keito.core.http_client import AsyncHttpClient, HttpClient
 from keito.core.pagination import AsyncPageIterator, SyncPageIterator
@@ -58,7 +59,7 @@ class InvoiceMessagesResource:
         self,
         invoice_id: str,
         *,
-        recipients: List[dict[str, str]],
+        recipients: builtins.list[dict[str, str]],
         subject: Optional[str] = None,
         body: Optional[str] = None,
         attach_pdf: Optional[bool] = True,
@@ -133,7 +134,7 @@ class AsyncInvoiceMessagesResource:
         self,
         invoice_id: str,
         *,
-        recipients: List[dict[str, str]],
+        recipients: builtins.list[dict[str, str]],
         subject: Optional[str] = None,
         body: Optional[str] = None,
         attach_pdf: Optional[bool] = True,

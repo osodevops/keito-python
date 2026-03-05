@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 
 class AgentMetadata:
@@ -21,11 +21,11 @@ class AgentMetadata:
         trigger: Optional[str] = None,
         confidence: Optional[float] = None,
         human_reviewed: Optional[bool] = None,
-    ) -> Dict[str, Any]:
-        metadata: Dict[str, Any] = {}
+    ) -> dict[str, Any]:
+        metadata: dict[str, Any] = {}
 
         # Agent section
-        agent: Dict[str, Any] = {}
+        agent: dict[str, Any] = {}
         if agent_id is not None:
             agent["id"] = agent_id
         if framework is not None:
@@ -34,7 +34,7 @@ class AgentMetadata:
             metadata["agent"] = agent
 
         # Run section
-        run: Dict[str, Any] = {}
+        run: dict[str, Any] = {}
         if run_id is not None:
             run["id"] = run_id
         if parent_run_id is not None:
@@ -45,7 +45,7 @@ class AgentMetadata:
             metadata["run"] = run
 
         # Model section
-        model: Dict[str, Any] = {}
+        model: dict[str, Any] = {}
         if model_provider is not None:
             model["provider"] = model_provider
         if model_name is not None:
@@ -60,7 +60,7 @@ class AgentMetadata:
             metadata["model"] = model
 
         # Quality section
-        quality: Dict[str, Any] = {}
+        quality: dict[str, Any] = {}
         if confidence is not None:
             quality["confidence"] = confidence
         if human_reviewed is not None:

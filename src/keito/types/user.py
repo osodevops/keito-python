@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -24,7 +24,7 @@ class User(BaseModel):
     default_hourly_rate: Optional[float] = None
     cost_rate: Optional[float] = None
     currency: Optional[str] = None
-    roles: List[str] = []
+    roles: list[str] = []
     user_type: Optional[UserType] = None
     avatar_url: Optional[str] = None
     company: Optional[IdName] = None

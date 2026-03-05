@@ -1,4 +1,3 @@
-import pytest
 from pytest_httpx import HTTPXMock
 
 from keito import Keito

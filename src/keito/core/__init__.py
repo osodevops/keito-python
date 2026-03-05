@@ -1,8 +1,8 @@
 from keito.core.api_error import (
     KeitoApiError,
     KeitoAuthError,
-    KeitoConnectionError,
     KeitoConflictError,
+    KeitoConnectionError,
     KeitoForbiddenError,
     KeitoNotFoundError,
     KeitoRateLimitError,

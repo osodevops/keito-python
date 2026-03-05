@@ -2,7 +2,6 @@ import pytest
 from pytest_httpx import HTTPXMock
 
 from keito import AsyncKeito, Keito
-from keito.types import TimeEntry
 
 _BASE = "https://app.keito.io/api/v2/time_entries"
 

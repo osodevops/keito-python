@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import contextlib
 import random
 import time
-from typing import Any, Dict, Optional, Type, TypeVar
+from typing import Any, Optional, TypeVar
 
 import httpx
 
@@ -26,7 +27,7 @@ T = TypeVar("T")
 _RETRYABLE_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 _IDEMPOTENT_METHODS = {"GET", "PUT", "DELETE", "HEAD", "OPTIONS"}
 
-_ERROR_MAP: Dict[int, Type[KeitoApiError]] = {
+_ERROR_MAP: dict[int, type[KeitoApiError]] = {
     400: KeitoValidationError,
     401: KeitoAuthError,
     403: KeitoForbiddenError,
@@ -56,10 +57,8 @@ def _raise_for_status(response: httpx.Response) -> None:
         return
 
     body: Optional[dict[str, Any]] = None
-    try:
+    with contextlib.suppress(Exception):
         body = response.json()
-    except Exception:
-        pass
 
     kwargs: dict[str, Any] = {
         "body": body,
@@ -107,7 +106,7 @@ class HttpClient:
         self._owns_client = httpx_client is None
         self._client = httpx_client or httpx.Client()
 
-    def _build_headers(self, extra: Optional[Dict[str, Any]] = None) -> dict[str, str]:
+    def _build_headers(self, extra: Optional[dict[str, Any]] = None) -> dict[str, str]:
         headers: dict[str, str] = {
             "Authorization": f"Bearer {self._api_key}",
             "Keito-Account-Id": self._account_id,
@@ -214,7 +213,7 @@ class AsyncHttpClient:
         self._owns_client = httpx_client is None
         self._client = httpx_client or httpx.AsyncClient()
 
-    def _build_headers(self, extra: Optional[Dict[str, Any]] = None) -> dict[str, str]:
+    def _build_headers(self, extra: Optional[dict[str, Any]] = None) -> dict[str, str]:
         headers: dict[str, str] = {
             "Authorization": f"Bearer {self._api_key}",
             "Keito-Account-Id": self._account_id,

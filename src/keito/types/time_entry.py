@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -33,7 +33,7 @@ class TimeEntry(BaseModel):
     billable_rate: Optional[float] = None
     cost_rate: Optional[float] = None
     source: Source
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None
     created_at: datetime
     updated_at: datetime
 
@@ -50,7 +50,7 @@ class TimeEntryCreate(BaseModel):
     started_time: Optional[str] = None
     ended_time: Optional[str] = None
     source: Optional[Source] = None
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None
 
 
 class TimeEntryUpdate(BaseModel):
@@ -62,4 +62,4 @@ class TimeEntryUpdate(BaseModel):
     billable: Optional[bool] = None
     started_time: Optional[str] = None
     ended_time: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None

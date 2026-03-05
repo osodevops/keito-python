@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+import builtins
+from typing import Any, Optional
 
 from keito.core.http_client import AsyncHttpClient, HttpClient
 from keito.core.pagination import AsyncPageIterator, SyncPageIterator
@@ -77,7 +78,7 @@ class InvoicesResource:
         notes: Optional[str] = None,
         period_start: Optional[str] = None,
         period_end: Optional[str] = None,
-        line_items: Optional[List[Dict[str, Any]]] = None,
+        line_items: Optional[builtins.list[dict[str, Any]]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> Invoice:
         parsed_items = None
@@ -213,7 +214,7 @@ class AsyncInvoicesResource:
         notes: Optional[str] = None,
         period_start: Optional[str] = None,
         period_end: Optional[str] = None,
-        line_items: Optional[List[Dict[str, Any]]] = None,
+        line_items: Optional[builtins.list[dict[str, Any]]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> Invoice:
         parsed_items = None

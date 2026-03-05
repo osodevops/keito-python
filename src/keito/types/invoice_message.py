@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -33,7 +33,7 @@ class InvoiceMessage(BaseModel):
 
 
 class InvoiceMessageCreate(BaseModel):
-    recipients: List[InvoiceMessageRecipient]
+    recipients: list[InvoiceMessageRecipient]
     subject: Optional[str] = None
     body: Optional[str] = None
     attach_pdf: Optional[bool] = True

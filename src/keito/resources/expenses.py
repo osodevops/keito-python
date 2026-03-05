@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from keito.core.http_client import AsyncHttpClient, HttpClient
 from keito.core.pagination import AsyncPageIterator, SyncPageIterator
@@ -69,7 +69,7 @@ class ExpensesResource:
         notes: Optional[str] = None,
         billable: Optional[bool] = None,
         source: Optional[Source] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> Expense:
         body = ExpenseCreate(
@@ -147,7 +147,7 @@ class AsyncExpensesResource:
         notes: Optional[str] = None,
         billable: Optional[bool] = None,
         source: Optional[Source] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> Expense:
         body = ExpenseCreate(

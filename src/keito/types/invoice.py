@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -62,7 +62,7 @@ class Invoice(BaseModel):
     closed_at: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
-    line_items: List[LineItem] = []
+    line_items: list[LineItem] = []
 
 
 class LineItemCreate(BaseModel):
@@ -89,7 +89,7 @@ class InvoiceCreate(BaseModel):
     notes: Optional[str] = None
     period_start: Optional[str] = None
     period_end: Optional[str] = None
-    line_items: Optional[List[LineItemCreate]] = None
+    line_items: Optional[list[LineItemCreate]] = None
 
 
 class InvoiceUpdate(BaseModel):
