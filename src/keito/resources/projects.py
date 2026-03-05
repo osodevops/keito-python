@@ -1,0 +1,86 @@
+from __future__ import annotations
+
+from typing import Any, Optional
+
+from keito.core.http_client import AsyncHttpClient, HttpClient
+from keito.core.pagination import AsyncPageIterator, SyncPageIterator
+from keito.core.request_options import RequestOptions
+from keito.types.project import Project
+
+_PATH = "/api/v2/projects"
+
+
+class ProjectsResource:
+    def __init__(self, http: HttpClient) -> None:
+        self._http = http
+
+    def _fetch_page(
+        self, *, params: dict[str, Any], request_options: Optional[RequestOptions] = None
+    ) -> dict[str, Any]:
+        response = self._http.request("GET", _PATH, params=params, request_options=request_options)
+        return response.json()
+
+    def list(
+        self,
+        *,
+        is_active: Optional[bool] = None,
+        client_id: Optional[str] = None,
+        updated_since: Optional[str] = None,
+        page: Optional[int] = None,
+        per_page: Optional[int] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> SyncPageIterator[Project]:
+        params: dict[str, Any] = {
+            "is_active": is_active,
+            "client_id": client_id,
+            "updated_since": updated_since,
+            "per_page": per_page,
+        }
+        if page is not None:
+            params["page"] = page
+
+        return SyncPageIterator(
+            fetch_page=self._fetch_page,
+            params=params,
+            item_key="projects",
+            model_cls=Project,
+            request_options=request_options,
+        )
+
+
+class AsyncProjectsResource:
+    def __init__(self, http: AsyncHttpClient) -> None:
+        self._http = http
+
+    async def _fetch_page(
+        self, *, params: dict[str, Any], request_options: Optional[RequestOptions] = None
+    ) -> dict[str, Any]:
+        response = await self._http.request("GET", _PATH, params=params, request_options=request_options)
+        return response.json()
+
+    def list(
+        self,
+        *,
+        is_active: Optional[bool] = None,
+        client_id: Optional[str] = None,
+        updated_since: Optional[str] = None,
+        page: Optional[int] = None,
+        per_page: Optional[int] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> AsyncPageIterator[Project]:
+        params: dict[str, Any] = {
+            "is_active": is_active,
+            "client_id": client_id,
+            "updated_since": updated_since,
+            "per_page": per_page,
+        }
+        if page is not None:
+            params["page"] = page
+
+        return AsyncPageIterator(
+            fetch_page=self._fetch_page,
+            params=params,
+            item_key="projects",
+            model_cls=Project,
+            request_options=request_options,
+        )
