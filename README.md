@@ -1,6 +1,6 @@
 # Keito Python SDK
 
-The official Python SDK for the [Keito](https://keito.ai) time tracking API v2. Built for both human developers and AI agents to programmatically track billable work, manage expenses, log outcomes, and generate invoices.
+Official Python SDK for the [Keito](https://keito.ai) API — track billable time, expenses, and invoices for humans and AI agents.
 
 [![PyPI](https://img.shields.io/pypi/v/keito)](https://pypi.org/project/keito/)
 [![Python](https://img.shields.io/pypi/pyversions/keito)](https://pypi.org/project/keito/)
