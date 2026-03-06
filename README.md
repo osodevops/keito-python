@@ -2,6 +2,7 @@
 
 Official Python SDK for the [Keito](https://keito.ai) API — track billable time, expenses, and invoices for humans and AI agents.
 
+[![CI](https://github.com/osodevops/keito-python/actions/workflows/ci.yml/badge.svg)](https://github.com/osodevops/keito-python/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/keito)](https://pypi.org/project/keito/)
 [![Python](https://img.shields.io/pypi/pyversions/keito)](https://pypi.org/project/keito/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
