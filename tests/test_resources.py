@@ -246,8 +246,6 @@ async def test_async_create_time_entry(httpx_mock: HTTPXMock):
 
 @pytest.mark.asyncio
 async def test_async_update_time_entry(httpx_mock: HTTPXMock):
-    from keito.types import TimeEntry
-
     client = AsyncKeito(api_key="kto_test", account_id="acc_test")
     httpx_mock.add_response(
         method="PATCH",
