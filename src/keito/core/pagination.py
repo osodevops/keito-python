@@ -3,9 +3,11 @@ from __future__ import annotations
 from collections.abc import Awaitable, Iterator
 from typing import Any, Callable, Generic, Optional, TypeVar
 
+from pydantic import BaseModel
+
 from keito.core.request_options import RequestOptions
 
-T = TypeVar("T")
+T = TypeVar("T", bound=BaseModel)
 
 
 class SyncPageIterator(Generic[T]):

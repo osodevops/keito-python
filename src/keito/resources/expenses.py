@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from keito.core.http_client import AsyncHttpClient, HttpClient
 from keito.core.pagination import AsyncPageIterator, SyncPageIterator
+from keito.core.raw_response import AsyncWithRawResponse, WithRawResponse
 from keito.core.request_options import RequestOptions
 from keito.types.common import Source
 from keito.types.expense import Expense, ExpenseCreate
@@ -14,12 +15,13 @@ _PATH = "/api/v2/expenses"
 class ExpensesResource:
     def __init__(self, http: HttpClient) -> None:
         self._http = http
+        self.with_raw_response = WithRawResponse(self, http)
 
     def _fetch_page(
         self, *, params: dict[str, Any], request_options: Optional[RequestOptions] = None
     ) -> dict[str, Any]:
         response = self._http.request("GET", _PATH, params=params, request_options=request_options)
-        return response.json()
+        return cast(dict[str, Any], response.json())
 
     def list(
         self,
@@ -92,12 +94,13 @@ class ExpensesResource:
 class AsyncExpensesResource:
     def __init__(self, http: AsyncHttpClient) -> None:
         self._http = http
+        self.with_raw_response = AsyncWithRawResponse(self, http)
 
     async def _fetch_page(
         self, *, params: dict[str, Any], request_options: Optional[RequestOptions] = None
     ) -> dict[str, Any]:
         response = await self._http.request("GET", _PATH, params=params, request_options=request_options)
-        return response.json()
+        return cast(dict[str, Any], response.json())
 
     def list(
         self,

@@ -15,6 +15,7 @@ Official Python SDK for the [Keito](https://keito.ai) API — track billable tim
 - **Automatic retries** — Exponential backoff on 408, 429, 5xx with jitter
 - **Typed error hierarchy** — Catch specific errors like `KeitoNotFoundError` or `KeitoRateLimitError`
 - **Agent helpers** — `AgentMetadata.build()` and `outcomes.log()` for AI agent billing workflows
+- **Raw response access** — `.with_raw_response` on every resource for headers, status codes, and rate limit info
 - **Env var fallback** — Reads `KEITO_API_KEY` and `KEITO_ACCOUNT_ID` from environment
 - **Context manager support** — Proper resource cleanup with `with` / `async with`
 
@@ -346,6 +347,25 @@ for entry in client.time_entries.list(source=Source.AGENT, from_date="2026-03-01
     print(f"{entry.user.name}: {entry.hours}h — {entry.notes}")
 ```
 
+### Inspecting Rate Limits and Headers
+
+Agents running high-throughput loops should monitor rate limits. Use `.with_raw_response` to inspect headers:
+
+```python
+result = client.time_entries.with_raw_response.create(
+    project_id=PROJECT,
+    task_id=TASK,
+    spent_date=TODAY,
+    hours=0.5,
+    source=Source.AGENT,
+)
+
+entry = result.data
+remaining = result.headers.get("X-RateLimit-Remaining")
+if remaining and int(remaining) < 10:
+    print(f"Warning: only {remaining} API calls remaining")
+```
+
 ---
 
 ## API Reference
@@ -382,6 +402,8 @@ client = Keito(
 | `client.outcomes` | `log()` |
 
 All `list()` methods return auto-paginating iterators. Async variants use `AsyncKeito` and return async iterators.
+
+Every resource also exposes `.with_raw_response` for raw `httpx.Response` access (see [Raw Response Access](#raw-response-access)).
 
 ### Pagination
 
@@ -467,6 +489,37 @@ entry = client.time_entries.create(
         "additional_headers": {"X-Idempotency-Key": "unique-key-123"},
     },
 )
+```
+
+### Raw Response Access
+
+Every resource has a `.with_raw_response` property that wraps method calls to return a `RawResponse` object with the parsed data alongside the raw `httpx.Response`. This is useful for inspecting status codes, headers, and rate limit info.
+
+```python
+from keito.core.raw_response import RawResponse
+
+# Access raw response alongside parsed data
+result = client.time_entries.with_raw_response.create(
+    project_id="proj_123",
+    task_id="task_456",
+    spent_date="2026-03-05",
+    hours=1.5,
+)
+
+print(result.status_code)        # 201
+print(result.headers)            # httpx.Headers
+print(result.raw_response)       # full httpx.Response
+
+entry = result.data              # TimeEntry (parsed Pydantic model)
+print(entry.id)
+
+# Works on any resource method (except list)
+raw = client.users.with_raw_response.me()
+print(raw.data.email)
+print(raw.status_code)
+
+# Async variant
+result = await async_client.time_entries.with_raw_response.create(...)
 ```
 
 ### Context Managers

@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from keito.types.common import Source
 from keito.types.time_entry import TimeEntry
+
+if TYPE_CHECKING:
+    from keito.resources.time_entries import AsyncTimeEntriesResource, TimeEntriesResource
 
 
 class OutcomeTypes(str, Enum):
@@ -23,7 +26,7 @@ class OutcomeTypes(str, Enum):
 class OutcomesHelper:
     """Sync convenience wrapper for logging outcome-based billing events."""
 
-    def __init__(self, time_entries: Any) -> None:
+    def __init__(self, time_entries: TimeEntriesResource) -> None:
         self._time_entries = time_entries
 
     def log(
@@ -32,7 +35,7 @@ class OutcomesHelper:
         project_id: str,
         task_id: str,
         spent_date: str,
-        outcome_type: str,
+        outcome_type: Union[str, OutcomeTypes],
         description: Optional[str] = None,
         unit_price: Optional[float] = None,
         quantity: int = 1,
@@ -67,7 +70,7 @@ class OutcomesHelper:
 class AsyncOutcomesHelper:
     """Async convenience wrapper for logging outcome-based billing events."""
 
-    def __init__(self, time_entries: Any) -> None:
+    def __init__(self, time_entries: AsyncTimeEntriesResource) -> None:
         self._time_entries = time_entries
 
     async def log(
@@ -76,7 +79,7 @@ class AsyncOutcomesHelper:
         project_id: str,
         task_id: str,
         spent_date: str,
-        outcome_type: str,
+        outcome_type: Union[str, OutcomeTypes],
         description: Optional[str] = None,
         unit_price: Optional[float] = None,
         quantity: int = 1,

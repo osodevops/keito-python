@@ -37,8 +37,8 @@ _ERROR_MAP: dict[int, type[KeitoApiError]] = {
 
 
 def _calculate_backoff(attempt: int) -> float:
-    base = min(2 ** (attempt - 1) * 0.5, 8.0)
-    jitter = random.random() * base * 0.5
+    base: float = min(2 ** (attempt - 1) * 0.5, 8.0)
+    jitter: float = random.random() * base * 0.5
     return base + jitter
 
 
@@ -128,8 +128,10 @@ class HttpClient:
         request_options: Optional[RequestOptions] = None,
     ) -> httpx.Response:
         opts = request_options or {}
-        max_retries = opts.get("max_retries") if opts.get("max_retries") is not None else self._max_retries
-        timeout = opts.get("timeout") if opts.get("timeout") is not None else self._timeout
+        opts_retries = opts.get("max_retries")
+        max_retries: int = opts_retries if opts_retries is not None else self._max_retries
+        opts_timeout = opts.get("timeout")
+        timeout: float = opts_timeout if opts_timeout is not None else self._timeout
         extra_headers = opts.get("additional_headers")
 
         url = f"{self._base_url}{path}"
@@ -167,7 +169,6 @@ class HttpClient:
 
             if response.status_code in _RETRYABLE_STATUS_CODES and attempt < max_retries:
                 if not is_idempotent and method.upper() == "POST":
-                    # Only retry POST if it's explicitly allowed (not by default)
                     _raise_for_status(response)
 
                 if response.status_code == 429:
@@ -182,7 +183,6 @@ class HttpClient:
             _raise_for_status(response)
             return response
 
-        # Should not reach here, but handle gracefully
         if last_exc:
             raise last_exc
         raise KeitoApiError("Max retries exceeded", status_code=0)
@@ -237,8 +237,10 @@ class AsyncHttpClient:
         import asyncio
 
         opts = request_options or {}
-        max_retries = opts.get("max_retries") if opts.get("max_retries") is not None else self._max_retries
-        timeout = opts.get("timeout") if opts.get("timeout") is not None else self._timeout
+        opts_retries = opts.get("max_retries")
+        max_retries: int = opts_retries if opts_retries is not None else self._max_retries
+        opts_timeout = opts.get("timeout")
+        timeout: float = opts_timeout if opts_timeout is not None else self._timeout
         extra_headers = opts.get("additional_headers")
 
         url = f"{self._base_url}{path}"
