@@ -1,11 +1,22 @@
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from keito.types.common import IdName, Source
+
+_TIME_OF_DAY_RE = re.compile(r"^(?:[01]\d|2[0-3]):[0-5]\d$")
+
+
+def _validate_time_of_day(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return value
+    if not _TIME_OF_DAY_RE.fullmatch(value):
+        raise ValueError("time-of-day fields must use HH:mm in the workspace timezone")
+    return value
 
 
 class TimeEntry(BaseModel):
@@ -47,10 +58,13 @@ class TimeEntryCreate(BaseModel):
     notes: Optional[str] = None
     billable: Optional[bool] = None
     is_running: Optional[bool] = None
+    replace_running: Optional[bool] = None
     started_time: Optional[str] = None
     ended_time: Optional[str] = None
     source: Optional[Source] = None
     metadata: Optional[dict[str, Any]] = None
+
+    _time_of_day = field_validator("started_time", "ended_time")(_validate_time_of_day)
 
 
 class TimeEntryUpdate(BaseModel):
@@ -63,3 +77,5 @@ class TimeEntryUpdate(BaseModel):
     started_time: Optional[str] = None
     ended_time: Optional[str] = None
     metadata: Optional[dict[str, Any]] = None
+
+    _time_of_day = field_validator("started_time", "ended_time")(_validate_time_of_day)

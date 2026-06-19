@@ -1,7 +1,10 @@
+import json
+
+import pytest
 from pytest_httpx import HTTPXMock
 
 from keito import Keito
-from keito.types import Source, TimeEntry
+from keito.types import Source, TimeEntry, TimeEntryCreate
 
 _BASE = "https://app.keito.io/api/v2/time_entries"
 
@@ -43,9 +46,15 @@ def test_create_time_entry(httpx_mock: HTTPXMock, client: Keito):
         spent_date="2026-03-05",
         hours=1.5,
         notes="Test entry",
+        replace_running=True,
         source=Source.AGENT,
         metadata={"agent_id": "test-agent"},
     )
+
+    request = httpx_mock.get_request()
+    assert request is not None
+    body = json.loads(request.content)
+    assert body["replace_running"] is True
 
     assert isinstance(entry, TimeEntry)
     assert entry.id == "entry_123"
@@ -62,6 +71,57 @@ def test_update_time_entry(httpx_mock: HTTPXMock, client: Keito):
 
     assert entry.notes == "Updated notes"
     assert entry.hours == 2.0
+
+
+def test_start_timer_uses_running_create_without_hours(httpx_mock: HTTPXMock, client: Keito):
+    running = {**_ENTRY_JSON, "id": "entry_running", "hours": 0, "is_running": True}
+    httpx_mock.add_response(method="POST", url=_BASE, json=running)
+
+    entry = client.time_entries.start_timer(
+        project_id="proj_789",
+        task_id="task_012",
+        spent_date="2026-03-05",
+        source=Source.AGENT,
+        metadata={"agent_id": "test-agent"},
+        replace_running=True,
+    )
+
+    request = httpx_mock.get_request()
+    assert request is not None
+    body = json.loads(request.content)
+    assert body["is_running"] is True
+    assert body["source"] == "agent"
+    assert body["replace_running"] is True
+    assert "hours" not in body
+    assert entry.id == "entry_running"
+    assert entry.is_running is True
+
+
+def test_stop_timer_uses_stop_endpoint(httpx_mock: HTTPXMock, client: Keito):
+    stopped = {**_ENTRY_JSON, "is_running": False, "hours": 1.25}
+    httpx_mock.add_response(method="PATCH", url=f"{_BASE}/entry_123/stop", json=stopped)
+
+    entry = client.time_entries.stop_timer("entry_123", notes="Completed review")
+
+    request = httpx_mock.get_request()
+    assert request is not None
+    body = json.loads(request.content)
+    assert body == {"notes": "Completed review"}
+    assert entry.is_running is False
+    assert entry.hours == 1.25
+
+
+def test_restart_timer_uses_restart_endpoint(httpx_mock: HTTPXMock, client: Keito):
+    running = {**_ENTRY_JSON, "is_running": True, "hours": 0}
+    httpx_mock.add_response(method="PATCH", url=f"{_BASE}/entry_123/restart", json=running)
+
+    entry = client.time_entries.restart_timer("entry_123", replace_running=True)
+
+    request = httpx_mock.get_request()
+    assert request is not None
+    body = json.loads(request.content)
+    assert body == {"replace_running": True}
+    assert entry.is_running is True
 
 
 def test_delete_time_entry(httpx_mock: HTTPXMock, client: Keito):
@@ -82,7 +142,10 @@ def test_list_time_entries(httpx_mock: HTTPXMock, client: Keito):
         },
     )
 
-    entries = list(client.time_entries.list(source=Source.AGENT))
+    entries = list(client.time_entries.list(source=Source.DESKTOP))
+    request = httpx_mock.get_request()
+    assert request is not None
+    assert "source=desktop" in str(request.url)
     assert len(entries) == 1
     assert entries[0].id == "entry_123"
 
@@ -131,3 +194,15 @@ def test_create_sends_correct_headers(httpx_mock: HTTPXMock, client: Keito):
     assert request.headers["Authorization"] == "Bearer kto_test_key"
     assert request.headers["Keito-Account-Id"] == "acc_test_123"
     assert "keito-python/" in request.headers["User-Agent"]
+
+
+def test_time_entry_create_validates_time_of_day():
+    TimeEntryCreate(project_id="proj_789", task_id="task_012", spent_date="2026-03-05", started_time="09:30")
+
+    with pytest.raises(ValueError):
+        TimeEntryCreate(
+            project_id="proj_789",
+            task_id="task_012",
+            spent_date="2026-03-05",
+            started_time="2026-03-05T09:30:00Z",
+        )
