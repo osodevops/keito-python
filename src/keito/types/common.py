@@ -11,6 +11,8 @@ class Source(str, Enum):
     CLI = "cli"
     API = "api"
     AGENT = "agent"
+    CALENDAR = "calendar"
+    DESKTOP = "desktop"
 
 
 class UserType(str, Enum):

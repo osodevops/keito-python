@@ -78,6 +78,7 @@ class TimeEntriesResource:
         notes: Optional[str] = None,
         billable: Optional[bool] = None,
         is_running: Optional[bool] = None,
+        replace_running: Optional[bool] = None,
         started_time: Optional[str] = None,
         ended_time: Optional[str] = None,
         source: Optional[Source] = None,
@@ -93,8 +94,45 @@ class TimeEntriesResource:
             notes=notes,
             billable=billable,
             is_running=is_running,
+            replace_running=replace_running,
             started_time=started_time,
             ended_time=ended_time,
+            source=source,
+            metadata=metadata,
+        )
+        response = self._http.request(
+            "POST",
+            _PATH,
+            json=body.model_dump(exclude_none=True),
+            request_options=request_options,
+        )
+        return TimeEntry.model_validate(response.json())
+
+    def start_timer(
+        self,
+        *,
+        project_id: str,
+        task_id: str,
+        spent_date: str,
+        user_id: Optional[str] = None,
+        notes: Optional[str] = None,
+        billable: Optional[bool] = None,
+        started_time: Optional[str] = None,
+        source: Optional[Source] = None,
+        metadata: Optional[dict[str, Any]] = None,
+        replace_running: Optional[bool] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> TimeEntry:
+        body = TimeEntryCreate(
+            project_id=project_id,
+            task_id=task_id,
+            spent_date=spent_date,
+            user_id=user_id,
+            notes=notes,
+            billable=billable,
+            is_running=True,
+            replace_running=replace_running,
+            started_time=started_time,
             source=source,
             metadata=metadata,
         )
@@ -138,6 +176,32 @@ class TimeEntriesResource:
             json=body.model_dump(exclude_none=True),
             request_options=request_options,
         )
+        return TimeEntry.model_validate(response.json())
+
+    def stop_timer(
+        self,
+        id: str,
+        *,
+        notes: Optional[str] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> TimeEntry:
+        body: dict[str, Any] = {}
+        if notes is not None:
+            body["notes"] = notes
+        response = self._http.request("PATCH", f"{_PATH}/{id}/stop", json=body, request_options=request_options)
+        return TimeEntry.model_validate(response.json())
+
+    def restart_timer(
+        self,
+        id: str,
+        *,
+        replace_running: Optional[bool] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> TimeEntry:
+        body: dict[str, Any] = {}
+        if replace_running is not None:
+            body["replace_running"] = replace_running
+        response = self._http.request("PATCH", f"{_PATH}/{id}/restart", json=body, request_options=request_options)
         return TimeEntry.model_validate(response.json())
 
     def delete(
@@ -215,6 +279,7 @@ class AsyncTimeEntriesResource:
         notes: Optional[str] = None,
         billable: Optional[bool] = None,
         is_running: Optional[bool] = None,
+        replace_running: Optional[bool] = None,
         started_time: Optional[str] = None,
         ended_time: Optional[str] = None,
         source: Optional[Source] = None,
@@ -230,8 +295,45 @@ class AsyncTimeEntriesResource:
             notes=notes,
             billable=billable,
             is_running=is_running,
+            replace_running=replace_running,
             started_time=started_time,
             ended_time=ended_time,
+            source=source,
+            metadata=metadata,
+        )
+        response = await self._http.request(
+            "POST",
+            _PATH,
+            json=body.model_dump(exclude_none=True),
+            request_options=request_options,
+        )
+        return TimeEntry.model_validate(response.json())
+
+    async def start_timer(
+        self,
+        *,
+        project_id: str,
+        task_id: str,
+        spent_date: str,
+        user_id: Optional[str] = None,
+        notes: Optional[str] = None,
+        billable: Optional[bool] = None,
+        started_time: Optional[str] = None,
+        source: Optional[Source] = None,
+        metadata: Optional[dict[str, Any]] = None,
+        replace_running: Optional[bool] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> TimeEntry:
+        body = TimeEntryCreate(
+            project_id=project_id,
+            task_id=task_id,
+            spent_date=spent_date,
+            user_id=user_id,
+            notes=notes,
+            billable=billable,
+            is_running=True,
+            replace_running=replace_running,
+            started_time=started_time,
             source=source,
             metadata=metadata,
         )
@@ -273,6 +375,37 @@ class AsyncTimeEntriesResource:
             "PATCH",
             f"{_PATH}/{id}",
             json=body.model_dump(exclude_none=True),
+            request_options=request_options,
+        )
+        return TimeEntry.model_validate(response.json())
+
+    async def stop_timer(
+        self,
+        id: str,
+        *,
+        notes: Optional[str] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> TimeEntry:
+        body: dict[str, Any] = {}
+        if notes is not None:
+            body["notes"] = notes
+        response = await self._http.request("PATCH", f"{_PATH}/{id}/stop", json=body, request_options=request_options)
+        return TimeEntry.model_validate(response.json())
+
+    async def restart_timer(
+        self,
+        id: str,
+        *,
+        replace_running: Optional[bool] = None,
+        request_options: Optional[RequestOptions] = None,
+    ) -> TimeEntry:
+        body: dict[str, Any] = {}
+        if replace_running is not None:
+            body["replace_running"] = replace_running
+        response = await self._http.request(
+            "PATCH",
+            f"{_PATH}/{id}/restart",
+            json=body,
             request_options=request_options,
         )
         return TimeEntry.model_validate(response.json())

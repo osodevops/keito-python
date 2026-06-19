@@ -1,10 +1,12 @@
 """Async resource tests for coverage of async code paths."""
 
+import json
+
 import pytest
 from pytest_httpx import HTTPXMock
 
 from keito import AsyncKeito, OutcomeTypes
-from keito.types import ClientModel, Contact, Invoice, InvoiceMessage, Project, Task, TeamTimeResult
+from keito.types import ClientModel, Contact, Invoice, InvoiceMessage, Project, Source, Task, TeamTimeResult
 
 _BASE = "https://app.keito.io/api/v2"
 
@@ -278,4 +280,36 @@ async def test_async_outcomes(httpx_mock: HTTPXMock):
     )
     assert result.hours == 0
     assert result.source.value == "agent"
+    await client.close()
+
+
+@pytest.mark.asyncio
+async def test_async_time_entry_timer_helpers(httpx_mock: HTTPXMock):
+    client = AsyncKeito(api_key="kto_test", account_id="acc_test")
+    running = {**_ENTRY_JSON, "id": "entry_running", "is_running": True, "hours": 0}
+    stopped = {**_ENTRY_JSON, "id": "entry_running", "is_running": False, "hours": 1.25}
+
+    httpx_mock.add_response(method="POST", url=f"{_BASE}/time_entries", json=running)
+    timer = await client.time_entries.start_timer(
+        project_id="proj_789",
+        task_id="task_012",
+        spent_date="2026-03-05",
+        source=Source.AGENT,
+        replace_running=True,
+    )
+    start_request = httpx_mock.get_request()
+    assert start_request is not None
+    start_body = json.loads(start_request.content)
+    assert start_body["is_running"] is True
+    assert start_body["replace_running"] is True
+    assert "hours" not in start_body
+    assert timer.is_running is True
+
+    httpx_mock.add_response(method="PATCH", url=f"{_BASE}/time_entries/entry_running/stop", json=stopped)
+    stopped_timer = await client.time_entries.stop_timer("entry_running", notes="Done")
+    stop_request = httpx_mock.get_requests()[-1]
+    assert stop_request is not None
+    assert json.loads(stop_request.content) == {"notes": "Done"}
+    assert stopped_timer.is_running is False
+
     await client.close()

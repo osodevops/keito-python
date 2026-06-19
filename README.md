@@ -128,6 +128,24 @@ entry = client.time_entries.create(
 )
 ```
 
+Start and stop running timers through the timer helpers. Omit `started_time` when
+you want the API to start at the server's current time; `stop_timer()` calculates
+elapsed duration server-side.
+
+```python
+from datetime import date
+
+timer = client.time_entries.start_timer(
+    project_id="proj_123",
+    task_id="task_456",
+    spent_date=str(date.today()),
+    source=Source.AGENT,
+    replace_running=True,
+)
+
+client.time_entries.stop_timer(timer.id, notes="Finished implementation")
+```
+
 ### Structured Agent Metadata
 
 The `AgentMetadata.build()` helper produces a structured dict following the Keito metadata schema:
@@ -564,7 +582,7 @@ from keito.types import (
 ```python
 from keito.types import Source, UserType, InvoiceState, PaymentTerm, ApprovalStatus
 
-Source.WEB | Source.CLI | Source.API | Source.AGENT
+Source.WEB | Source.CLI | Source.API | Source.AGENT | Source.CALENDAR | Source.DESKTOP
 UserType.HUMAN | UserType.AGENT
 InvoiceState.DRAFT | InvoiceState.OPEN | InvoiceState.PAID | InvoiceState.CLOSED
 PaymentTerm.UPON_RECEIPT | PaymentTerm.NET_15 | PaymentTerm.NET_30 | ...
