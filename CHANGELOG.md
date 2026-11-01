@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0](https://github.com/osodevops/keito-python/compare/v0.2.0...v0.3.0) (2026-11-01)
+
+
+### Features
+
+* add with_raw_response, mypy strict, 94% test coverage ([5d0e163](https://github.com/osodevops/keito-python/commit/5d0e163bc313a760a07642e72c42b001d5cbe834))
+* align timer API contract ([#3](https://github.com/osodevops/keito-python/issues/3)) ([0d9fd90](https://github.com/osodevops/keito-python/commit/0d9fd9043111ad96036a801f2ac29f676ee42205))
+* repair API defaults, expense capture and installed SDK contract ([#4](https://github.com/osodevops/keito-python/issues/4)) ([41225ff](https://github.com/osodevops/keito-python/commit/41225ffc490bc8aeb0308814fb0c46cfa4e59409))
+
+
+### Bug Fixes
+
+* remove unused import in test_resources ([ab76191](https://github.com/osodevops/keito-python/commit/ab7619166537ca5a7c4a4a90a81b0271708239c4))
+
+
+### Documentation
+
+* add CI status badge to README ([834f531](https://github.com/osodevops/keito-python/commit/834f531fe9faf9696f071ce9dff4abd6e5544075))
+
 ## [0.2.0](https://github.com/osodevops/keito-python/compare/v0.1.0...v0.2.0) (2026-03-06)
 
 
