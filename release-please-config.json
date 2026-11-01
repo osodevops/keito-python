@@ -5,10 +5,7 @@
       "release-type": "python",
       "package-name": "keito",
       "bump-minor-pre-major": true,
-      "bump-patch-for-minor-pre-major": true,
-      "extra-files": [
-        "src/keito/_version.py"
-      ]
+      "bump-patch-for-minor-pre-major": true
     }
   }
 }

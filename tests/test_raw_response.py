@@ -5,7 +5,7 @@ from keito import AsyncKeito, Keito
 from keito.core.raw_response import RawResponse
 from keito.types import TimeEntry, User
 
-_BASE = "https://app.keito.io/api/v2"
+_BASE = "https://app.keito.ai/api/v2"
 
 _ENTRY_JSON = {
     "id": "entry_123",

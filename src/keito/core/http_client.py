@@ -4,6 +4,7 @@ import contextlib
 import random
 import time
 from typing import Any, Optional, TypeVar
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 
@@ -26,6 +27,32 @@ T = TypeVar("T")
 
 _RETRYABLE_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 _IDEMPOTENT_METHODS = {"GET", "PUT", "DELETE", "HEAD", "OPTIONS"}
+
+
+def _normalize_base_url(base_url: str) -> str:
+    parts = urlsplit(base_url)
+    if (
+        parts.scheme not in {"http", "https"}
+        or not parts.hostname
+        or parts.username is not None
+        or parts.password is not None
+        or parts.query
+        or parts.fragment
+    ):
+        raise ValueError("base_url must be an HTTP(S) URL without credentials, query or fragment")
+    path = parts.path.rstrip("/")
+    if path.endswith("/api/v2"):
+        path = path[: -len("/api/v2")]
+    return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
+
+
+def _may_retry(method: str, headers: dict[str, str], *, multipart: bool) -> bool:
+    if multipart:
+        return False
+    return method.upper() in _IDEMPOTENT_METHODS or any(
+        name.lower() == "idempotency-key" and value.strip() for name, value in headers.items()
+    )
+
 
 _ERROR_MAP: dict[int, type[KeitoApiError]] = {
     400: KeitoValidationError,
@@ -93,14 +120,14 @@ class HttpClient:
         *,
         api_key: str,
         account_id: str,
-        base_url: str = "https://app.keito.io",
+        base_url: str = "https://app.keito.ai",
         timeout: float = 60.0,
         max_retries: int = 2,
         httpx_client: Optional[httpx.Client] = None,
     ) -> None:
         self._api_key = api_key
         self._account_id = account_id
-        self._base_url = base_url.rstrip("/")
+        self._base_url = _normalize_base_url(base_url)
         self._timeout = timeout
         self._max_retries = max_retries
         self._owns_client = httpx_client is None
@@ -125,6 +152,7 @@ class HttpClient:
         *,
         json: Optional[dict[str, Any]] = None,
         params: Optional[dict[str, Any]] = None,
+        files: Optional[dict[str, Any]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> httpx.Response:
         opts = request_options or {}
@@ -136,12 +164,15 @@ class HttpClient:
 
         url = f"{self._base_url}{path}"
         headers = self._build_headers(extra_headers)
+        if files is not None:
+            # HTTPX owns the multipart boundary, including with caller headers.
+            headers = {k: v for k, v in headers.items() if k.lower() != "content-type"}
 
         # Filter out None values from params
         if params:
             params = {k: v for k, v in params.items() if v is not None}
 
-        is_idempotent = method.upper() in _IDEMPOTENT_METHODS
+        is_idempotent = _may_retry(method, headers, multipart=files is not None)
         last_exc: Optional[Exception] = None
 
         for attempt in range(max_retries + 1):
@@ -152,6 +183,7 @@ class HttpClient:
                     headers=headers,
                     json=json,
                     params=params,
+                    files=files,
                     timeout=timeout,
                 )
             except httpx.TimeoutException as e:
@@ -168,7 +200,7 @@ class HttpClient:
                 raise KeitoConnectionError(str(e)) from e
 
             if response.status_code in _RETRYABLE_STATUS_CODES and attempt < max_retries:
-                if not is_idempotent and method.upper() == "POST":
+                if not is_idempotent:
                     _raise_for_status(response)
 
                 if response.status_code == 429:
@@ -200,14 +232,14 @@ class AsyncHttpClient:
         *,
         api_key: str,
         account_id: str,
-        base_url: str = "https://app.keito.io",
+        base_url: str = "https://app.keito.ai",
         timeout: float = 60.0,
         max_retries: int = 2,
         httpx_client: Optional[httpx.AsyncClient] = None,
     ) -> None:
         self._api_key = api_key
         self._account_id = account_id
-        self._base_url = base_url.rstrip("/")
+        self._base_url = _normalize_base_url(base_url)
         self._timeout = timeout
         self._max_retries = max_retries
         self._owns_client = httpx_client is None
@@ -232,6 +264,7 @@ class AsyncHttpClient:
         *,
         json: Optional[dict[str, Any]] = None,
         params: Optional[dict[str, Any]] = None,
+        files: Optional[dict[str, Any]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> httpx.Response:
         import asyncio
@@ -245,11 +278,13 @@ class AsyncHttpClient:
 
         url = f"{self._base_url}{path}"
         headers = self._build_headers(extra_headers)
+        if files is not None:
+            headers = {k: v for k, v in headers.items() if k.lower() != "content-type"}
 
         if params:
             params = {k: v for k, v in params.items() if v is not None}
 
-        is_idempotent = method.upper() in _IDEMPOTENT_METHODS
+        is_idempotent = _may_retry(method, headers, multipart=files is not None)
         last_exc: Optional[Exception] = None
 
         for attempt in range(max_retries + 1):
@@ -260,6 +295,7 @@ class AsyncHttpClient:
                     headers=headers,
                     json=json,
                     params=params,
+                    files=files,
                     timeout=timeout,
                 )
             except httpx.TimeoutException as e:
@@ -276,7 +312,7 @@ class AsyncHttpClient:
                 raise KeitoConnectionError(str(e)) from e
 
             if response.status_code in _RETRYABLE_STATUS_CODES and attempt < max_retries:
-                if not is_idempotent and method.upper() == "POST":
+                if not is_idempotent:
                     _raise_for_status(response)
 
                 if response.status_code == 429:

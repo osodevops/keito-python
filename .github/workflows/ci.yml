@@ -31,3 +31,16 @@ jobs:
       - run: pip install -e ".[dev]"
       - name: Test
         run: pytest --cov=keito --cov-report=xml
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - name: Build sdist and wheel
+        run: python -m build
+      - name: Install wheel and verify documented public API
+        run: python scripts/smoke_package.py dist/*.whl

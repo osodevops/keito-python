@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel
 
@@ -13,6 +13,18 @@ class Source(str, Enum):
     AGENT = "agent"
     CALENDAR = "calendar"
     DESKTOP = "desktop"
+    MOBILE = "mobile"
+    INTEGRATION = "integration"
+    CLICKUP = "clickup"
+    EXTENSION = "extension"
+
+
+SourceParam = Union[Source, str]
+
+
+def source_value(source: Optional[SourceParam]) -> Optional[str]:
+    """Accept documented strings without bypassing the known source contract."""
+    return Source(source).value if source is not None else None
 
 
 class UserType(str, Enum):

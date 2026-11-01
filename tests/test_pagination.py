@@ -3,7 +3,7 @@ from pytest_httpx import HTTPXMock
 
 from keito import AsyncKeito, Keito
 
-_BASE = "https://app.keito.io/api/v2/time_entries"
+_BASE = "https://app.keito.ai/api/v2/time_entries"
 
 _ENTRY_TEMPLATE = {
     "user_id": "user_1",
