@@ -8,6 +8,14 @@ from pydantic import BaseModel, field_validator
 from keito.types.common import ApprovalStatus, IdName, Source
 
 
+class ExpenseCategory(IdName):
+    unit_name: Optional[str] = None
+    unit_price: Optional[float] = None
+    is_active: Optional[bool] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
 class Expense(BaseModel):
     model_config = {"frozen": True}
 
@@ -17,7 +25,7 @@ class Expense(BaseModel):
     expense_category_id: str
     user: IdName
     project: IdName
-    expense_category: IdName
+    expense_category: ExpenseCategory
     spent_date: date
     total_cost: float
     units: Optional[float] = None

@@ -10,7 +10,7 @@ from keito.types.common import (
 )
 from keito.types.contact import Contact, ContactCreate
 from keito.types.error import ErrorResponse
-from keito.types.expense import Expense, ExpenseCreate, ExpenseReceipt, ExpenseUpdate
+from keito.types.expense import Expense, ExpenseCategory, ExpenseCreate, ExpenseReceipt, ExpenseUpdate
 from keito.types.invoice import Invoice, InvoiceCreate, InvoiceUpdate, LineItem
 from keito.types.invoice_message import (
     InvoiceMessage,
@@ -32,6 +32,7 @@ __all__ = [
     "ContactCreate",
     "ErrorResponse",
     "Expense",
+    "ExpenseCategory",
     "ExpenseCreate",
     "ExpenseReceipt",
     "ExpenseUpdate",

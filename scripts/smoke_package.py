@@ -43,7 +43,8 @@ def main() -> None:
             expense = {
                 "id":"expense-1", "user_id":"user-1", "project_id":"project-1",
                 "expense_category_id":"category-1", "user":{"id":"user-1"},
-                "project":{"id":"project-1"}, "expense_category":{"id":"category-1"},
+                "project":{"id":"project-1"},
+                "expense_category":{"id":"category-1", "unit_price":0.45, "unit_name":"mile"},
                 "spent_date":"2026-10-30", "total_cost":12.5, "units":1.25,
                 "source":"api", "currency":"GBP",
                 "created_at":"2026-10-30T10:00:00Z", "updated_at":"2026-10-30T10:00:00Z"
@@ -81,6 +82,7 @@ def main() -> None:
             with httpx.Client(transport=httpx.MockTransport(respond)) as transport:
                 with Keito(httpx_client=transport, **options) as client:
                     assert client.expenses.get("expense-1").currency == "GBP"
+                    assert client.expenses.get("expense-1").expense_category.unit_price == 0.45
                     assert client.expenses.update("expense-1", notes=None).units == 1.25
                     receipt = client.expenses.upload_receipt(
                         "expense-1", file=b"%PDF", filename="r.pdf", content_type="application/pdf")

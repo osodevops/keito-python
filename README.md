@@ -454,7 +454,8 @@ Invalid source values fail before a request is sent.
 Create the expense first, retain its ID, and upload the original receipt to that
 expense. The category controls whether creation accepts `total_cost` or `units`;
 the SDK does not accept a client-supplied `unit_price`. Fractional units are
-supported. Ordinary expense create/update supports refund details and
+supported; a returned expense retains `expense.expense_category.unit_price` and
+`unit_name` from its category. Ordinary expense create/update supports refund details and
 `attach_receipt_to_invoice` under the same rules as the REST API.
 
 ```python
@@ -631,7 +632,7 @@ All response models are frozen Pydantic v2 `BaseModel` subclasses. Import from `
 ```python
 from keito.types import (
     TimeEntry, TimeEntryCreate, TimeEntryUpdate,
-    Expense, ExpenseCreate, ExpenseUpdate, ExpenseReceipt,
+    Expense, ExpenseCategory, ExpenseCreate, ExpenseUpdate, ExpenseReceipt,
     Project,
     ClientModel, ClientCreate,
     Contact, ContactCreate,

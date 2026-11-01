@@ -95,6 +95,19 @@ def test_expense_get_update_preserves_null_and_delete(httpx_mock):
     assert json.loads(requests[1].content) == {"notes": None, "metadata": None, "attach_receipt_to_invoice": False}
 
 
+def test_expense_category_unit_price_is_preserved_for_receipt_imports(httpx_mock):
+    httpx_mock.add_response(
+        json={
+            **_EXPENSE_JSON,
+            "expense_category": {"id": "category-1", "name": "Distance", "unit_name": "mile", "unit_price": 0.45},
+        }
+    )
+    with Keito(api_key="synthetic-key", account_id="synthetic-account") as client:
+        expense = client.expenses.get("expense-1")
+    assert expense.expense_category.unit_price == 0.45
+    assert expense.expense_category.unit_name == "mile"
+
+
 def test_receipt_upload_download_and_delete_use_the_existing_expense(httpx_mock):
     metadata = {
         "receipt_file_name": "receipt.pdf",
