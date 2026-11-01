@@ -3,7 +3,7 @@ from pytest_httpx import HTTPXMock
 from keito import Keito
 from keito.types import Expense, Source
 
-_BASE = "https://app.keito.io/api/v2/expenses"
+_BASE = "https://app.keito.ai/api/v2/expenses"
 
 _EXPENSE_JSON = {
     "id": "exp_123",

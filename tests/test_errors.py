@@ -11,7 +11,7 @@ from keito import (
     KeitoValidationError,
 )
 
-_BASE = "https://app.keito.io/api/v2/time_entries"
+_BASE = "https://app.keito.ai/api/v2/time_entries"
 
 
 def test_401_raises_auth_error(httpx_mock: HTTPXMock, client: Keito):

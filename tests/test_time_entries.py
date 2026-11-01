@@ -6,7 +6,7 @@ from pytest_httpx import HTTPXMock
 from keito import Keito
 from keito.types import Source, TimeEntry, TimeEntryCreate
 
-_BASE = "https://app.keito.io/api/v2/time_entries"
+_BASE = "https://app.keito.ai/api/v2/time_entries"
 
 _ENTRY_JSON = {
     "id": "entry_123",

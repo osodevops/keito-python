@@ -68,7 +68,7 @@ def test_agent_metadata_empty():
 def test_outcome_log(httpx_mock: HTTPXMock, client: Keito):
     httpx_mock.add_response(
         method="POST",
-        url="https://app.keito.io/api/v2/time_entries",
+        url="https://app.keito.ai/api/v2/time_entries",
         json=_ENTRY_JSON,
     )
 

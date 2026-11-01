@@ -3,7 +3,7 @@ from pytest_httpx import HTTPXMock
 from keito import Keito
 from keito.types import Invoice, InvoiceMessage
 
-_BASE = "https://app.keito.io/api/v2/invoices"
+_BASE = "https://app.keito.ai/api/v2/invoices"
 
 _INVOICE_JSON = {
     "id": "inv_123",

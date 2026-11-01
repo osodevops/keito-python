@@ -6,7 +6,7 @@ from keito.core.http_client import AsyncHttpClient, HttpClient
 from keito.core.pagination import AsyncPageIterator, SyncPageIterator
 from keito.core.raw_response import AsyncWithRawResponse, WithRawResponse
 from keito.core.request_options import RequestOptions
-from keito.types.common import Source
+from keito.types.common import Source, SourceParam, source_value
 from keito.types.time_entry import TimeEntry, TimeEntryCreate, TimeEntryUpdate
 
 _PATH = "/api/v2/time_entries"
@@ -38,7 +38,7 @@ class TimeEntriesResource:
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
         updated_since: Optional[str] = None,
-        source: Optional[Source] = None,
+        source: Optional[SourceParam] = None,
         page: Optional[int] = None,
         per_page: Optional[int] = None,
         request_options: Optional[RequestOptions] = None,
@@ -53,7 +53,7 @@ class TimeEntriesResource:
             "from": from_date,
             "to": to_date,
             "updated_since": updated_since,
-            "source": source.value if source else None,
+            "source": source_value(source),
             "per_page": per_page,
         }
         if page is not None:
@@ -81,7 +81,7 @@ class TimeEntriesResource:
         replace_running: Optional[bool] = None,
         started_time: Optional[str] = None,
         ended_time: Optional[str] = None,
-        source: Optional[Source] = None,
+        source: Optional[SourceParam] = None,
         metadata: Optional[dict[str, Any]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> TimeEntry:
@@ -97,7 +97,7 @@ class TimeEntriesResource:
             replace_running=replace_running,
             started_time=started_time,
             ended_time=ended_time,
-            source=source,
+            source=Source(source) if source is not None else None,
             metadata=metadata,
         )
         response = self._http.request(
@@ -118,7 +118,7 @@ class TimeEntriesResource:
         notes: Optional[str] = None,
         billable: Optional[bool] = None,
         started_time: Optional[str] = None,
-        source: Optional[Source] = None,
+        source: Optional[SourceParam] = None,
         metadata: Optional[dict[str, Any]] = None,
         replace_running: Optional[bool] = None,
         request_options: Optional[RequestOptions] = None,
@@ -133,7 +133,7 @@ class TimeEntriesResource:
             is_running=True,
             replace_running=replace_running,
             started_time=started_time,
-            source=source,
+            source=Source(source) if source is not None else None,
             metadata=metadata,
         )
         response = self._http.request(
@@ -239,7 +239,7 @@ class AsyncTimeEntriesResource:
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
         updated_since: Optional[str] = None,
-        source: Optional[Source] = None,
+        source: Optional[SourceParam] = None,
         page: Optional[int] = None,
         per_page: Optional[int] = None,
         request_options: Optional[RequestOptions] = None,
@@ -254,7 +254,7 @@ class AsyncTimeEntriesResource:
             "from": from_date,
             "to": to_date,
             "updated_since": updated_since,
-            "source": source.value if source else None,
+            "source": source_value(source),
             "per_page": per_page,
         }
         if page is not None:
@@ -282,7 +282,7 @@ class AsyncTimeEntriesResource:
         replace_running: Optional[bool] = None,
         started_time: Optional[str] = None,
         ended_time: Optional[str] = None,
-        source: Optional[Source] = None,
+        source: Optional[SourceParam] = None,
         metadata: Optional[dict[str, Any]] = None,
         request_options: Optional[RequestOptions] = None,
     ) -> TimeEntry:
@@ -298,7 +298,7 @@ class AsyncTimeEntriesResource:
             replace_running=replace_running,
             started_time=started_time,
             ended_time=ended_time,
-            source=source,
+            source=Source(source) if source is not None else None,
             metadata=metadata,
         )
         response = await self._http.request(
@@ -319,7 +319,7 @@ class AsyncTimeEntriesResource:
         notes: Optional[str] = None,
         billable: Optional[bool] = None,
         started_time: Optional[str] = None,
-        source: Optional[Source] = None,
+        source: Optional[SourceParam] = None,
         metadata: Optional[dict[str, Any]] = None,
         replace_running: Optional[bool] = None,
         request_options: Optional[RequestOptions] = None,
@@ -334,7 +334,7 @@ class AsyncTimeEntriesResource:
             is_running=True,
             replace_running=replace_running,
             started_time=started_time,
-            source=source,
+            source=Source(source) if source is not None else None,
             metadata=metadata,
         )
         response = await self._http.request(

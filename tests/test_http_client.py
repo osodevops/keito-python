@@ -14,7 +14,7 @@ from keito import (
     KeitoTimeoutError,
 )
 
-_BASE = "https://app.keito.io/api/v2"
+_BASE = "https://app.keito.ai/api/v2"
 
 _USER_JSON = {
     "id": "user_123",

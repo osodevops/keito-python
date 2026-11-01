@@ -6,7 +6,7 @@ from pytest_httpx import HTTPXMock
 from keito import AsyncKeito, Keito
 from keito.types import ClientModel, Contact, Project, Task, TeamTimeResult, User
 
-_BASE = "https://app.keito.io/api/v2"
+_BASE = "https://app.keito.ai/api/v2"
 
 _CLIENT_JSON = {
     "id": "cli_123",

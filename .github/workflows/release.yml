@@ -40,6 +40,8 @@ jobs:
       - run: pip install build twine
       - name: Build
         run: python -m build
+      - name: Install wheel and verify documented public API
+        run: python scripts/smoke_package.py dist/*.whl
       - name: Publish to PyPI
         run: twine upload dist/*
         env:

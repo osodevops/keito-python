@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional, Union
 
-from keito.types.common import Source
+from keito.types.common import Source, SourceParam
 from keito.types.time_entry import TimeEntry
 
 if TYPE_CHECKING:
@@ -24,7 +24,7 @@ class OutcomeTypes(str, Enum):
 
 
 class OutcomesHelper:
-    """Sync convenience wrapper for logging outcome-based billing events."""
+    """Record outcome annotations on a time entry; no invoice or payment is created."""
 
     def __init__(self, time_entries: TimeEntriesResource) -> None:
         self._time_entries = time_entries
@@ -42,6 +42,7 @@ class OutcomesHelper:
         success: bool = True,
         evidence: Optional[dict[str, Any]] = None,
         metadata: Optional[dict[str, Any]] = None,
+        source: SourceParam = Source.AGENT,
     ) -> TimeEntry:
         outcome_metadata: dict[str, Any] = {
             "outcome_type": outcome_type if isinstance(outcome_type, str) else outcome_type.value,
@@ -62,13 +63,13 @@ class OutcomesHelper:
             spent_date=spent_date,
             hours=0,
             notes=description,
-            source=Source.AGENT,
+            source=Source(source),
             metadata=outcome_metadata,
         )
 
 
 class AsyncOutcomesHelper:
-    """Async convenience wrapper for logging outcome-based billing events."""
+    """Async outcome annotations; no invoice or payment is created."""
 
     def __init__(self, time_entries: AsyncTimeEntriesResource) -> None:
         self._time_entries = time_entries
@@ -86,6 +87,7 @@ class AsyncOutcomesHelper:
         success: bool = True,
         evidence: Optional[dict[str, Any]] = None,
         metadata: Optional[dict[str, Any]] = None,
+        source: SourceParam = Source.AGENT,
     ) -> TimeEntry:
         outcome_metadata: dict[str, Any] = {
             "outcome_type": outcome_type if isinstance(outcome_type, str) else outcome_type.value,
@@ -106,6 +108,6 @@ class AsyncOutcomesHelper:
             spent_date=spent_date,
             hours=0,
             notes=description,
-            source=Source.AGENT,
+            source=Source(source),
             metadata=outcome_metadata,
         )
